@@ -2,6 +2,7 @@ function main(){
   fetchToys()
   createFormListener()
   createLikeListener()
+  createDeleteListener()
 }
 
 let addToy = false;
@@ -62,11 +63,16 @@ function displayToys(toy) {
     newButton.innerText = "Like"
     newButton.className = "like-btn"
     newButton.setAttribute('id', toy.id)
-    //add an event listener to the button
-    // newButton.addEventListener('click', likeToy)
+
+
+    let deleteButton = document.createElement('button')
+    deleteButton.innerText = "Delete"
+    deleteButton.className = "delete-btn"
+    deleteButton.setAttribute('id', toy.id)
+
 
     //append the card to the toycontainer
-      newDiv.append(newName, newImage, newLikes, newButton)
+      newDiv.append(newName, newImage, newLikes, newButton, deleteButton)
         toyContainer.append(newDiv)
 
 }
@@ -79,14 +85,28 @@ function createLikeListener(e){
 })
 }
 
+function createDeleteListener(e){
+  toyContainer.addEventListener('click', function(e){
+    if (e.target.className === 'delete-btn'){
+
+      const id = e.target.id
+
+      const reqObj = {
+        method: 'DELETE'
+      }
+
+      fetch(`http://localhost:3000/toys/${id}`, reqObj)
+      .then(resp => resp.json())
+      .then(toy => e.target.parentNode.remove())
+    }
+})
+}
+
 
 function likeToy(e){
-  console.log(e.target.id)
   const id = e.target.id
   const pTag = e.target.previousElementSibling
   let likes = parseInt(pTag.innerText)
-
-  // e.target.previousElementSibling.innerText = `0 likes`
   
 
     const reqObj = {
@@ -106,6 +126,9 @@ function likeToy(e){
         pTag.innerText = `${likes + 1} likes`
       })
   }
+
+
+  
 
 
 function createFormListener(){
@@ -137,12 +160,6 @@ function createFormListener(){
       })
   })
 }
-
-
-
-
-
-
 
 
 
